@@ -18,12 +18,30 @@ from sklearn.metrics import make_scorer, mean_squared_error
 
 def predict_randomforest(Xtrain, Ytrain, Xtest):
 	rfr = RandomForestRegressor(n_jobs=1, random_state=0)
-	param_grid = {}
+	param_grid = {'n_estimators': [500], 'max_features': [10,15,20,25], 'max_depth':[3,5,7,9,11]} # another param
+	# n_estimators : The number of trees in the forest
+	# max_features: The number of features to consider when looking for the best split
+	# max_depth   : The maximum depth of the tree
+
 	RMSE = make_scorer(mean_error, greater_is_better=False)
 	model = GridSearchCV(estimator=rfr, param_grid=param_grid, n_jobs=1, cv=10, scoring=RMSE)
-	model.fit(Xtrain, Ytrain.values.ravel())
+	# estimator  : This is assumed to implement the scikit-learn estimator interface
+	# param_grid : dict or list of dictionaries
+	# n_job      : Number of jobs to run in parallel
+	# cv         : Determines the cross-validation splitting strategy
+	# scoring    : A single string or a callable to evaluate the predictions on the test set
 
-	Ypredict = model.predict(Xtest)
+	model.fit(Xtrain, Ytrain.values.ravel())     # Trains the model for a given dataset
+
+	print('Random forecast regression...')
+	print('Best Params:')
+	print(model.best_params_)
+	# best_params_ : Parameter setting that gave the best results on the hold out data
+	print('Best CV Score:')
+	print(-model.best_score_)
+	# best_score_ : Mean cross-validated score of the best_estimator
+
+	Ypredict = model.predict(Xtest)		# Call predict on the estimator with the best found parameters
 	return Ypredict
 
 def mean_error(ground_truth, prediction):
