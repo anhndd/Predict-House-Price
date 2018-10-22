@@ -1,17 +1,18 @@
+#title: training model using Random Forest Algorithm
+#author: anhndd
+#date 20/10/2018
+
 import datetime
+
 import numpy as np
 import pandas as pd
-import xgboost as xgb
-from sklearn import preprocessing
-from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor, ExtraTreesRegressor
-from sklearn.model_selection import GridSearchCV
+from scipy.stats import skew
+from sklearn.ensemble import RandomForestRegressor
 # from sklearn.cross_validation import ShuffleSplit
 from sklearn.metrics import make_scorer, mean_squared_error
-from sklearn.kernel_ridge import KernelRidge
-from sklearn.svm import SVR
-from sklearn.neighbors import KNeighborsRegressor
-from scipy.stats import skew
- 
+from sklearn.model_selection import GridSearchCV
+
+
 def mean_squared_error_(ground_truth, predictions):
     return mean_squared_error(ground_truth, predictions) ** 0.5
 RMSE = make_scorer(mean_squared_error_, greater_is_better=False)    
@@ -63,89 +64,29 @@ def model_random_forecast(Xtrain,Xtest,ytrain):
     y_pred = model.predict(Xtest)
     return y_pred, -model.best_score_
 
-def model_gradient_boosting_tree(Xtrain,Xtest,ytrain):
-    
-    X_train = Xtrain
-    y_train = ytrain 
-    gbr = GradientBoostingRegressor(random_state=0)
-    param_grid = {
- #       'n_estimators': [500],
- #       'max_features': [10,15],
-#	'max_depth': [6,8,10],
- #       'learning_rate': [0.05,0.1,0.15],
-  #      'subsample': [0.8]
-    }
-    model = GridSearchCV(estimator=gbr, param_grid=param_grid, n_jobs=1, cv=10, scoring=RMSE)
-    model.fit(X_train, y_train)
-    print('Gradient boosted tree regression...')
-    print('Best Params:')
-    print(model.best_params_)
-    print('Best CV Score:')
-    print(-model.best_score_)
-
-    y_pred = model.predict(Xtest)
-    return y_pred, -model.best_score_
-
-def model_xgb_regression(Xtrain,Xtest,ytrain):
-    
-    X_train = Xtrain
-    y_train = ytrain 
-    
-    xgbreg = xgb.XGBRegressor(seed=0)
-    param_grid = {
-#        'n_estimators': [500],
-#        'learning_rate': [ 0.05],
-#        'max_depth': [ 7, 9, 11],
-#        'subsample': [ 0.8],
-#        'colsample_bytree': [0.75,0.8,0.85],
-    }
-    model = GridSearchCV(estimator=xgbreg, param_grid=param_grid, n_jobs=1, cv=10, scoring=RMSE)
-    model.fit(X_train, y_train)
-    print('eXtreme Gradient Boosting regression...')
-    print('Best Params:')
-    print(model.best_params_)
-    print('Best CV Score:')
-    print(-model.best_score_)
-
-    y_pred = model.predict(Xtest)
-    return y_pred, -model.best_score_
-
-def model_extra_trees_regression(Xtrain,Xtest,ytrain):
-    
-    X_train = Xtrain
-    y_train = ytrain
-    
-    etr = ExtraTreesRegressor(n_jobs=1, random_state=0)
-    param_grid = {}#'n_estimators': [500], 'max_features': [10,15,20]}
-    model = GridSearchCV(estimator=etr, param_grid=param_grid, n_jobs=1, cv=10, scoring=RMSE)
-    model.fit(X_train, y_train)
-    print('Extra trees regression...')
-    print('Best Params:')
-    print(model.best_params_)
-    print('Best CV Score:')
-    print(-model.best_score_)
-
-    y_pred = model.predict(Xtest)
-    return y_pred, -model.best_score_
-
-
 # read data, build model and do prediction
 train = pd.read_csv("../../input/train.csv") # read train data
 test = pd.read_csv("../../input/test.csv") # read test data
+
+# do preprocessing data
 Xtrain, Xtest, ytrain = data_preprocess(train,test)
 
-# output train_result
+# output training data after preprocessing -------------
 # sub_file = 'DATA_RESULT.xlsx'
 # writer = pd.ExcelWriter(sub_file)
 # Xtrain.to_excel(writer, 'Sheet1')
 # writer.save()
+# ------------------------------------------------------
 
+# do training and testing
 test_predict,score = model_random_forecast(Xtrain, Xtest, ytrain)
-#test_predict,score = model_xgb_regression(Xtrain,Xtest,ytrain)
-# test_predict,score = model_extra_trees_regression(Xtrain,Xtest,ytrain)
-#test_predict,score = model_gradient_boosting_tree(Xtrain,Xtest,ytrain)
 
+# create result file
 create_submission(np.exp(test_predict),score)
+
+#This code aims to training and testing model predict the price by using Random Forest algorithm
+# Input: data/train.csv & data/test.csv
+# Output: code/submission_[ time ].csv
 
 
 
