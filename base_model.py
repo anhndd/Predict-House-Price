@@ -73,8 +73,8 @@ def model_gradient_boosting_tree(Xtrain, Xtest, ytrain):
 
 
 # read data, build model and do prediction
-train = pd.read_csv("../../input/train.csv")  # read train data
-test = pd.read_csv("../../input/test.csv")  # read test data
+train = pd.read_csv("input/train.csv")  # read train data
+test = pd.read_csv("input/test.csv")  # read test data
 Xtrain, Xtest, ytrain = data_preprocess(train, test)
 
 test_predict, score = model_gradient_boosting_tree(Xtrain, Xtest, ytrain)
