@@ -1,0 +1,1 @@
+{"gbt_log": {"best_params_": {}, "best_score_": -0.5786881683622777, "duration": 0.3005709648132324}, "rf_log": {"best_params_": {"n_estimators": 500}, "best_score_": -0.432858127524448, "duration": 9.205132961273193}, "et_log": {"best_params_": {"max_features": 55, "n_estimators": 100}, "best_score_": -0.4594665557548721, "duration": 1.1600749492645264}}
